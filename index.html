@@ -37,6 +37,26 @@
 </head>
 <body class="h-full flex flex-col font-sans antialiased text-slate-200 bg-slate-950">
 
+  <!-- LOCK SCREEN MODAL (PIN / PASSWORD) -->
+  <div id="lockScreen" class="fixed inset-0 bg-slate-950 z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card bg-slate-900 rounded-2xl border border-slate-800 max-w-sm w-full p-6 space-y-5 text-center shadow-2xl">
+      <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20 flex items-center justify-center mx-auto text-xl">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <div>
+        <h3 class="font-bold text-white text-base">MiHogar Cash Protegido</h3>
+        <p class="text-xs text-slate-400 mt-1">Introduce la contraseña de acceso para continuar.</p>
+      </div>
+
+      <form onsubmit="unlockApp(event)" class="space-y-4 text-xs">
+        <input type="password" id="lockInputPass" placeholder="Contraseña..." required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-center text-white text-base tracking-widest focus:outline-none focus:border-emerald-500">
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg transition-all shadow-lg shadow-emerald-900/20">
+          Desbloquear
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- TOP HEADER / NAVBAR -->
   <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -58,7 +78,7 @@
         </div>
         <button onclick="openConfigModal()" class="px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/20">
           <i class="fa-solid fa-cloud"></i>
-          <span>Sincronizar Nube</span>
+          <span>Ajustes & Nube</span>
         </button>
       </div>
     </div>
@@ -220,36 +240,41 @@
 
   </main>
 
-  <!-- MODAL: CONFIGURACIÓN NUBE -->
+  <!-- MODAL: CONFIGURACIÓN NUBE & SEGURIDAD -->
   <div id="configModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="glass-card bg-slate-900 rounded-2xl border border-slate-800 max-w-md w-full p-6 space-y-5">
+    <div class="glass-card bg-slate-900 rounded-2xl border border-slate-800 max-w-md w-full p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="font-bold text-white text-base flex items-center gap-2">
-          <i class="fa-solid fa-cloud-arrow-up text-emerald-400"></i> Conectar con tu Pareja
+          <i class="fa-solid fa-shield-halved text-emerald-400"></i> Ajustes & Sincronización
         </h3>
         <button onclick="closeConfigModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <form id="configForm" onsubmit="saveConfig(event)" class="space-y-4 text-xs">
+      <form id="configForm" onsubmit="saveConfig(event)" class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-300 mb-1 font-medium">1. Tu Secret Key de JSONBin</label>
+          <label class="block text-slate-300 mb-1 font-medium">Secret Key de JSONBin</label>
           <input type="password" id="cfgSecretKey" placeholder="$2a$10$..." required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
         </div>
 
         <div>
-          <label class="block text-slate-300 mb-1 font-medium">2. Bin ID</label>
+          <label class="block text-slate-300 mb-1 font-medium">Bin ID</label>
           <div class="flex gap-2">
             <input type="text" id="cfgBinId" placeholder="Ej: 65a123..." class="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
             <button type="button" onclick="createNewBinAuto()" class="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg whitespace-nowrap">
-              ⚡ Crear Uno Nuevo
+              ⚡ Crear Nuevo
             </button>
           </div>
-          <span class="text-[10px] text-slate-400 mt-1 block">Si es el móvil de tu pareja, pega aquí el <b>Bin ID</b> generado previamente.</span>
         </div>
 
-        <div class="flex gap-2 justify-end pt-2">
-          <button type="button" onclick="closeConfigModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-all">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg transition-all">Conectar</button>
+        <div>
+          <label class="block text-slate-300 mb-1 font-medium">Contraseña de Acceso de la App (Opcional)</label>
+          <input type="password" id="cfgAppPass" placeholder="Ej: 1234 o una palabra secreta" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+          <span class="text-[10px] text-slate-400 mt-1 block">Si pones una contraseña, se pedirá al entrar a la web.</span>
+        </div>
+
+        <div class="flex gap-2 justify-end pt-3">
+          <button type="button" onclick="closeConfigModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg">Guardar Ajustes</button>
         </div>
       </form>
     </div>
@@ -350,17 +375,39 @@
     let appData = { expenses: [], subscriptions: [] };
     let binId = localStorage.getItem('jsonbin_id') || '';
     let secretKey = localStorage.getItem('jsonbin_key') || '';
+    let appPass = localStorage.getItem('mihogar_pass') || '';
     let categoryChartInstance = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('expDate').valueAsDate = new Date();
+      
+      // Comprobar si hay contraseña configurada
+      if (appPass) {
+        document.getElementById('lockScreen').classList.remove('hidden');
+      } else {
+        initApp();
+      }
+    });
+
+    function unlockApp(e) {
+      e.preventDefault();
+      const entered = document.getElementById('lockInputPass').value;
+      if (entered === appPass) {
+        document.getElementById('lockScreen').classList.add('hidden');
+        initApp();
+      } else {
+        alert('Contraseña incorrecta');
+      }
+    }
+
+    function initApp() {
       if (binId && secretKey) {
         fetchFromCloud();
       } else {
         loadMockData();
         renderAll();
       }
-    });
+    }
 
     function updateSyncStatusUI(connected = false) {
       const dot = document.getElementById('syncDot');
@@ -374,11 +421,10 @@
       }
     }
 
-    // CLOUD API AUTOMÁTICA
     async function createNewBinAuto() {
       const key = document.getElementById('cfgSecretKey').value.trim();
       if (!key) {
-        alert("Por favor, introduce tu Secret Key primero.");
+        alert("Introduce primero tu Secret Key.");
         return;
       }
 
@@ -388,7 +434,7 @@
           headers: {
             'Content-Type': 'application/json',
             'X-Master-Key': key,
-            'X-Bin-Private': 'false' // Forzar público para evitar bloqueos
+            'X-Bin-Private': 'false'
           },
           body: JSON.stringify(appData)
         });
@@ -397,23 +443,21 @@
           const data = await res.json();
           const newBinId = data.metadata.id;
           document.getElementById('cfgBinId').value = newBinId;
-          alert(`¡Nuevo Bin Creado con Éxito!\n\nTu Bin ID es: ${newBinId}\n\nComparte esta clave y el Bin ID con tu pareja.`);
+          alert(`¡Bin creado con éxito!\n\nBin ID: ${newBinId}`);
         } else {
-          alert("Error al crear el Bin. Verifica que la Secret Key sea correcta.");
+          alert("Error al crear el Bin. Revisa tu Secret Key.");
         }
       } catch (e) {
-        alert("Error de red al intentar crear el Bin.");
+        alert("Error de red.");
       }
     }
 
     async function fetchFromCloud() {
       if (!binId || !secretKey) return;
-
       try {
         const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
           headers: { 'X-Master-Key': secretKey }
         });
-
         if (res.ok) {
           const data = await res.json();
           appData = {
@@ -435,7 +479,6 @@
         renderAll();
         return;
       }
-
       try {
         await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
           method: 'PUT',
@@ -456,15 +499,16 @@
       e.preventDefault();
       binId = document.getElementById('cfgBinId').value.trim();
       secretKey = document.getElementById('cfgSecretKey').value.trim();
+      appPass = document.getElementById('cfgAppPass').value.trim();
 
       localStorage.setItem('jsonbin_id', binId);
       localStorage.setItem('jsonbin_key', secretKey);
+      localStorage.setItem('mihogar_pass', appPass);
 
       await fetchFromCloud();
       closeConfigModal();
     }
 
-    // MOCK DATA
     function loadMockData() {
       appData = {
         expenses: [
@@ -480,7 +524,6 @@
       };
     }
 
-    // RENDER LOGIC
     function renderAll() {
       renderMetrics();
       renderRecentTable();
@@ -656,7 +699,7 @@
       const banner = document.getElementById('alertBanner');
       if (upcoming.length > 0) {
         banner.classList.remove('hidden');
-        document.getElementById('alertMessage').textContent = `Las suscripciones (${upcoming.map(u => u.name).join(', ')}) se cobrarán en los próximos 3 días.`;
+        document.getElementById('alertMessage', `Las suscripciones (${upcoming.map(u => u.name).join(', ')}) se cobrarán en los próximos 3 días.`);
       } else {
         banner.classList.add('hidden');
       }
@@ -730,6 +773,7 @@
     function openConfigModal() {
       document.getElementById('cfgBinId').value = binId;
       document.getElementById('cfgSecretKey').value = secretKey;
+      document.getElementById('cfgAppPass').value = appPass;
       document.getElementById('configModal').classList.remove('hidden');
     }
     function closeConfigModal() { document.getElementById('configModal').classList.add('hidden'); }
